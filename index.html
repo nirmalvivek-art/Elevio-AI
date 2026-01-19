@@ -327,12 +327,12 @@
 
         // 2. Send Emails (Chained Sequence)
         // First: Send the notification to YOU (Admin)
-        emailjs.sendForm(EMAILJS_SERVICE_ID, TEMPLATE_ADMIN, form)
+        emailjs.sendForm(SERVICE_ID, TEMPLATE_ADMIN, form)
             .then(() => {
                 console.log("Admin alert sent.");
                 // Second: Send confirmation to USER
                 // Note: The User Template in EmailJS must have "To Email" set to {{email}}
-                return emailjs.sendForm(EMAILJS_SERVICE_ID, TEMPLATE_USER, form);
+                return emailjs.sendForm(SERVICE_ID, TEMPLATE_USER, form);
             })
             .then(() => {
                 console.log("User confirmation sent.");
