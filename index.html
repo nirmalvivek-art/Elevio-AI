@@ -5,6 +5,13 @@
     <title>Elevio AI - Welcome to the Unified Universe of Hospitality Tech</title>
 
     <meta name="description" content="Elevio AI - Welcome to the Unified Universe of Hospitality Tech">
+    <meta property="og:type" content="website">
+<meta property="og:title" content="Elevio AI - Welcome to the Unified Universe of Hospitality Tech">
+<meta property="og:description" content="One single, secure ecosystem for your entire hospitality business. Stop Integrating. Start Elevating.">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Elevio AI - Welcome to the Unified Universe">
+<meta name="twitter:description" content="One single, secure ecosystem for your entire hospitality business.">
 </head>
 
 <script src="https://cdn.tailwindcss.com"></script>
@@ -320,12 +327,12 @@
 
         // 2. Send Emails (Chained Sequence)
         // First: Send the notification to YOU (Admin)
-        emailjs.sendForm(SERVICE_ID, TEMPLATE_ADMIN, form)
+        emailjs.sendForm(EMAILJS_SERVICE_ID, TEMPLATE_ADMIN, form)
             .then(() => {
                 console.log("Admin alert sent.");
                 // Second: Send confirmation to USER
                 // Note: The User Template in EmailJS must have "To Email" set to {{email}}
-                return emailjs.sendForm(SERVICE_ID, TEMPLATE_USER, form);
+                return emailjs.sendForm(EMAILJS_SERVICE_ID, TEMPLATE_USER, form);
             })
             .then(() => {
                 console.log("User confirmation sent.");
