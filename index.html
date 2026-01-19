@@ -1,0 +1,335 @@
+<script src="https://cdn.tailwindcss.com"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+<style>
+  /* --- ANIMATIONS --- */
+  @keyframes orbit-cw { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  @keyframes orbit-ccw { 0% { transform: rotate(0deg); } 100% { transform: rotate(-360deg); } }
+  
+  .orbit-1 { animation: orbit-cw 60s linear infinite; }
+  .orbit-2 { animation: orbit-ccw 80s linear infinite; }
+  .orbit-3 { animation: orbit-cw 100s linear infinite; }
+
+  .planet-1 { animation: orbit-ccw 60s linear infinite; }
+  .planet-2 { animation: orbit-cw 80s linear infinite; }
+  .planet-3 { animation: orbit-ccw 100s linear infinite; }
+
+  /* --- UI STYLES --- */
+  .module-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+  }
+  .module-card:hover {
+    background: rgba(197, 179, 88, 0.15);
+    border-color: #C5B358;
+    transform: scale(1.1);
+    z-index: 50;
+    cursor: default;
+  }
+
+  /* Form Input Styles */
+  .elevio-input {
+    width: 100%;
+    background: rgba(0, 0, 51, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    outline: none;
+    transition: all 0.2s;
+  }
+  .elevio-input:focus {
+    border-color: #C5B358;
+    background: rgba(0, 0, 51, 0.9);
+  }
+  .elevio-label {
+    display: block;
+    color: #9CA3AF;
+    font-size: 11px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Modal Transition */
+  .modal-backdrop {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .modal-backdrop.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+  .modal-content {
+    transform: scale(0.95) translateY(20px);
+    transition: all 0.3s ease;
+  }
+  .modal-backdrop.active .modal-content {
+    transform: scale(1) translateY(0);
+  }
+</style>
+
+<div class="relative min-h-screen bg-[#000033] text-white font-sans flex flex-col justify-between overflow-hidden">
+
+    <div class="absolute inset-0 z-0 pointer-events-none">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] bg-blue-900/20 rounded-full blur-[120px] animate-pulse"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30vw] h-[30vw] bg-[#C5B358]/5 rounded-full blur-[80px]"></div>
+    </div>
+
+    <div class="relative z-10 flex-grow flex flex-col items-center justify-center py-4">
+        
+        <div class="relative w-[800px] h-[800px] flex items-center justify-center scale-[0.5] md:scale-90 lg:scale-100 transition-transform duration-500 mt-[-50px]">
+
+            <div class="relative z-50 hover:scale-110 transition-transform duration-500 cursor-pointer group">
+                 <div class="absolute inset-0 bg-blue-500/30 blur-2xl rounded-full group-hover:bg-[#C5B358]/30 transition-colors"></div>
+                 <svg width="140" height="140" viewBox="0 0 100 100" class="relative drop-shadow-2xl">
+                    <defs>
+                        <radialGradient id="coreGrad3" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" stop-color="#A78BFA" />
+                            <stop offset="100%" stop-color="#3B82F6" />
+                        </radialGradient>
+                        <linearGradient id="bladeGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#60A5FA" />
+                            <stop offset="50%" stop-color="#C084FC" />
+                            <stop offset="100%" stop-color="#FDE047" />
+                        </linearGradient>
+                    </defs>
+                    <circle cx="50" cy="50" r="12" fill="url(#coreGrad3)" />
+                    <ellipse cx="50" cy="50" rx="18" ry="45" fill="none" stroke="url(#bladeGrad3)" stroke-width="2" transform="rotate(0 50 50)" opacity="0.9" />
+                    <ellipse cx="50" cy="50" rx="18" ry="45" fill="none" stroke="url(#bladeGrad3)" stroke-width="2" transform="rotate(60 50 50)" opacity="0.9" />
+                    <ellipse cx="50" cy="50" rx="18" ry="45" fill="none" stroke="url(#bladeGrad3)" stroke-width="2" transform="rotate(120 50 50)" opacity="0.9" />
+                </svg>
+                <div class="absolute -bottom-14 left-1/2 -translate-x-1/2 text-center w-[200px]">
+                    <h2 class="text-2xl font-black tracking-tighter text-white">ELEVIO</h2>
+                    <p class="text-[9px] font-bold text-[#C5B358] tracking-[0.2em] uppercase">The Intelligence Core</p>
+                </div>
+            </div>
+
+            <div class="absolute border border-white/10 rounded-full w-[320px] h-[320px] orbit-1">
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-10 flex items-center justify-center module-card rounded-lg planet-1">
+                    <span class="font-bold text-xs text-blue-200">POS</span>
+                </div>
+                <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-24 h-10 flex items-center justify-center module-card rounded-lg planet-1">
+                    <span class="font-bold text-xs text-blue-200">PMS</span>
+                </div>
+                <div class="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-10 flex items-center justify-center module-card rounded-lg planet-1">
+                    <span class="font-bold text-xs text-blue-200">HR</span>
+                </div>
+                <div class="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-24 h-10 flex items-center justify-center module-card rounded-lg planet-1">
+                    <span class="font-bold text-xs text-blue-200">Payroll</span>
+                </div>
+            </div>
+
+            <div class="absolute border border-white/5 rounded-full w-[520px] h-[520px] orbit-2">
+                <div class="absolute top-[15%] left-[15%] w-32 h-12 flex items-center justify-center module-card rounded-lg planet-2">
+                    <span class="font-bold text-xs text-[#C5B358]">Stock Control</span>
+                </div>
+                <div class="absolute bottom-[15%] right-[15%] w-36 h-12 flex items-center justify-center module-card rounded-lg planet-2">
+                    <span class="font-bold text-xs text-[#C5B358]">Finance & Acc.</span>
+                </div>
+                <div class="absolute top-[15%] right-[15%] w-24 h-12 flex items-center justify-center module-card rounded-lg planet-2">
+                    <span class="font-bold text-xs text-[#C5B358]">CRM</span>
+                </div>
+                <div class="absolute bottom-[15%] left-[15%] w-32 h-12 flex items-center justify-center module-card rounded-lg planet-2">
+                    <span class="font-bold text-xs text-[#C5B358]">Asset Mgmt</span>
+                </div>
+            </div>
+
+            <div class="absolute border border-dashed border-white/5 rounded-full w-[720px] h-[720px] orbit-3">
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-10 flex items-center justify-center module-card rounded-lg planet-3">
+                    <span class="font-bold text-xs text-purple-300">FP&A</span>
+                </div>
+                <div class="absolute bottom-[25%] left-[5%] w-24 h-10 flex items-center justify-center module-card rounded-lg planet-3">
+                    <span class="font-bold text-xs text-purple-300">RMS</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="relative z-20 mt-[-60px] md:mt-[-40px] text-center max-w-lg px-6">
+            <h1 class="text-4xl md:text-6xl font-black mb-4 tracking-tight">The Unified Universe.</h1>
+            <p class="text-sm md:text-base text-gray-400 mb-8 leading-relaxed">
+                One single, secure ecosystem for your entire hospitality business.
+                <br /><span class="text-[#C5B358]">Stop Integrating. Start Elevating.</span>
+            </p>
+            
+            <button onclick="openBetaModal()" class="group relative inline-flex items-center justify-center px-8 py-3 font-bold text-white transition-all duration-200 bg-[#C5B358] font-pj rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#C5B358] hover:bg-[#b09f4c]">
+                <span class="absolute inset-0 w-full h-full -mt-1 rounded-lg opacity-30 bg-gradient-to-b from-transparent via-transparent to-black"></span>
+                <span class="relative flex items-center">
+                    Get Early Access / Beta Tester
+                    <svg class="w-5 h-5 ml-2 -mr-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                </span>
+            </button>
+        </div>
+    </div>
+
+    <footer class="relative z-20 border-t border-white/10 bg-[#00002a] backdrop-blur-xl mt-12">
+        <div class="max-w-7xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
+            <div class="flex items-center space-x-2 mb-4 md:mb-0">
+                <span class="font-bold text-white">ELEVIO AI</span>
+                <span class="text-[#C5B358]">BETA v1.0.4</span>
+            </div>
+            <p>&copy; 2026 Elevio Suite. An AI Powered Intelligence.</p>
+        </div>
+    </footer>
+
+</div>
+
+<div id="betaModal" class="modal-backdrop fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+    <div class="modal-content relative w-full max-w-2xl bg-[#000033] border border-white/20 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        
+        <div class="p-6 border-b border-white/10 flex justify-between items-center bg-white/5">
+            <div>
+                <h3 class="text-xl font-black text-white">Join the Beta</h3>
+                <p class="text-xs text-[#C5B358] uppercase tracking-widest">Secure Application</p>
+            </div>
+            <button onclick="closeBetaModal()" class="text-gray-400 hover:text-white transition">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+
+        <div class="overflow-y-auto p-6 space-y-4 custom-scrollbar">
+            
+            <form id="betaForm" onsubmit="handleBetaSubmit(event)" class="space-y-4">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="elevio-label">Full Name</label>
+                        <input type="text" name="full_name" required class="elevio-input" placeholder="e.g. John Doe" />
+                    </div>
+                    <div>
+                        <label class="elevio-label">Position</label>
+                        <input type="text" name="position" required class="elevio-input" placeholder="e.g. GM, Owner, CTO" />
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="elevio-label">Company Name</label>
+                        <input type="text" name="company_name" required class="elevio-input" placeholder="e.g. Grand Hotel" />
+                    </div>
+                    <div>
+                        <label class="elevio-label">Industry</label>
+                        <select name="industry" class="elevio-input">
+                            <option>Hotel / Resort</option>
+                            <option>Restaurant Group</option>
+                            <option>Pub / Inn</option>
+                            <option>Bar / Nightclub</option>
+                            <option>Other Hospitality</option>
+                            <option>Retail</option>
+                            <option>Other Industries</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="elevio-label">Company Address</label>
+                    <input type="text" name="address" class="elevio-input" placeholder="City, Country" />
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="elevio-label">Email</label>
+                        <input type="email" name="email" required class="elevio-input" placeholder="name@company.com" />
+                    </div>
+                    <div>
+                        <label class="elevio-label">Phone Number</label>
+                        <input type="tel" name="phone" class="elevio-input" placeholder="+1 ..." />
+                    </div>
+                </div>
+
+                <div>
+                    <label class="elevio-label">Current Software Used</label>
+                    <input type="text" name="current_software" class="elevio-input" placeholder="e.g. Micros, Opera, Planday..." />
+                </div>
+
+                <div>
+                    <label class="elevio-label">Biggest Pressing Issue</label>
+                    <textarea name="pain_point" rows="3" class="elevio-input" placeholder="What is costing you the most time or money?"></textarea>
+                </div>
+
+                <div class="pt-4 flex items-center justify-between border-t border-white/10 mt-4">
+                               <button type="submit" id="submitBtn" class="bg-[#C5B358] text-[#000033] font-bold px-6 py-2 rounded hover:bg-white transition-colors">
+                        Submit Application
+                    </button>
+                </div>
+            </form>
+
+            <div id="successMessage" class="hidden text-center py-10">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-500/20 text-green-400 mb-4">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-2">Application Received.</h3>
+                <p class="text-gray-400">Welcome to the future of hospitality.<br/>We will be in touch shortly.</p>
+                <button onclick="closeBetaModal()" class="mt-6 text-sm text-[#C5B358] hover:text-white underline">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- 1. SETUP YOUR EMAIL KEYS HERE ---
+    // Log in to dashboard.emailjs.com to find these
+    const EMAILJS_PUBLIC_KEY = "ytbTY9UQintEL_0ga"; 
+    const EMAILJS_SERVICE_ID = "service_k0pgics"; // From the 'Email Services' tab
+    const TEMPLATE_ADMIN     = "template_8z3iuq2"; // The Red Alert Template ID
+    const TEMPLATE_USER      = "template_jvnpomj";  // The Galaxy Logo Template ID
+
+    // Initialize EmailJS
+    (function(){
+        emailjs.init(EMAILJS_PUBLIC_KEY);
+    })();
+
+    // --- MODAL FUNCTIONS ---
+    function openBetaModal() {
+        document.getElementById('betaModal').classList.add('active');
+        document.body.style.overflow = 'hidden'; 
+    }
+    
+    function closeBetaModal() {
+        document.getElementById('betaModal').classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    // --- SUBMISSION LOGIC ---
+    function handleBetaSubmit(e) {
+        e.preventDefault();
+        
+        const btn = document.getElementById('submitBtn');
+        const form = document.getElementById('betaForm');
+        const success = document.getElementById('successMessage');
+        
+        // 1. Loading State
+        const originalText = btn.innerText;
+        btn.innerHTML = `SENDING...`;
+        btn.disabled = true;
+
+        // 2. Send Emails (Chained Sequence)
+        // First: Send the notification to YOU (Admin)
+        emailjs.sendForm(SERVICE_ID, TEMPLATE_ADMIN, form)
+            .then(() => {
+                console.log("Admin alert sent.");
+                // Second: Send confirmation to USER
+                // Note: The User Template in EmailJS must have "To Email" set to {{email}}
+                return emailjs.sendForm(SERVICE_ID, TEMPLATE_USER, form);
+            })
+            .then(() => {
+                console.log("User confirmation sent.");
+                // 3. Show Success Message
+                form.style.display = 'none';
+                success.classList.remove('hidden');
+            })
+            .catch((error) => {
+                // Error Handling
+                console.error("Email Error:", error);
+                alert("Secure Transmission Failed. Please check your connection or try again.");
+                btn.innerText = originalText;
+                btn.disabled = false;
+            });
+    }
+</script>
